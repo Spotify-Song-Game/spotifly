@@ -15,13 +15,11 @@ var render = Render.create({
 });
 
 // create two boxes and a ground
-var boxA = Bodies.rectangle(400, 200, 80, 80);
-var boxB = Bodies.rectangle(400, 200, 80, 80);
-
+var player = Bodies.rectangle(400, 200, 50, 50);
 var ground = Bodies.rectangle(400, 610, 810, 60, { isStatic: true });
 
 // add all of the bodies to the world
-Composite.add(engine.world, [boxA, boxB, ground]);
+Composite.add(engine.world, [player, ground]);
 
 // run the renderer
 Render.run(render);
@@ -31,3 +29,4 @@ var runner = Runner.create();
 
 // run the engine
 Runner.run(runner, engine);
+
