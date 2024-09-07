@@ -12,7 +12,7 @@ var canvas, //we don't actually need canvas or anything that draws (ie, ctx and 
 
 var audio = new Audio(); // We need to make an audio so we can actually analyze it using js's analyzer
 
-audio.id = "audio_player"; // this just gives it a reference so we can change it later
+audio.id = "audio_player"; // this just gives it a reference so we can access it later
 audio.src = "mp3/test.mp3"; // obvious, the source of the audio, I don't know if it has to be mp3, but for now it is.
 audio.controls = true; // not going to exist in the final, but for now it provides a button to start the music which starts the bars
 audio.loop = false; // loop or don't loop
