@@ -15,13 +15,20 @@ var render = Render.create({
 });
 
 // create two boxes and a ground
-var boxA = Bodies.rectangle(400, 200, 80, 80);
+var boxA = Bodies.rectangle(0, 0, 80, 80);
 var boxB = Bodies.rectangle(400, 200, 80, 80);
 
-var ground = Bodies.rectangle(400, 610, 810, 60, { isStatic: true });
+var bar_width = 81
+var ground = []
+
+for (let i = 0; i < 10; i++) {
+    ground.push(Bodies.rectangle(bar_width/2 + bar_width * i, 610, bar_width, Math.random() * 500, { isStatic: true }));
+}
 
 // add all of the bodies to the world
-Composite.add(engine.world, [boxA, boxB, ground]);
+Composite.add(engine.world, [boxA, boxB]);
+Composite.add(engine.world, ground);
+
 
 // run the renderer
 Render.run(render);
