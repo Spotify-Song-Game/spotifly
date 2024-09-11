@@ -1,9 +1,9 @@
 //CONSTANTS
-const NUM_BARS = 30;
-const bar_width = 810/NUM_BARS;
-const MIN_Y = 600;
-const MAX_SPEED = 5;
-const ORIGIN = {x: 400, y: 200}
+const NUM_BARS = 30; //the number of bars you should see on screen
+const bar_width = 810/NUM_BARS; // width of each bar
+const MIN_Y = 600; //minimum y level before game resets cube (BROKEN)
+const MAX_SPEED = 5; //speed cap (BROKEN)
+const ORIGIN = {x: 400, y: 200} //where to teleport cube when out of bounds (BROKEN)
 
 // module aliases
 var Engine = Matter.Engine,
