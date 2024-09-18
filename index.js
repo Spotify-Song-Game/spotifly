@@ -38,14 +38,15 @@ for (let i = 0; i < NUM_BARS; i++) {
 }
 
 var walls = [];
-walls.push(Bodies.rectangle(-80,200, 80, 800, {isStatic: true}))
-walls.push(Bodies.rectangle(840,200, 80, 800, {isStatic: true}))
+walls.push(Bodies.rectangle(-80,200, 80, 10000, {isStatic: true}))
+walls.push(Bodies.rectangle(840,200, 80, 10000, {isStatic: true}))
 
 
 // add all of the bodies to the world
 Composite.add(engine.world, playerBox);
 Composite.add(engine.world, ground);
 Composite.add(engine.world, walls);
+//Composite.add(engine.world, Bodies.rectangle(300, -10, 1000, 10, {isStatic: true}))
 Composite.add(engine.world, enemyBoxes);
 
 
@@ -78,20 +79,20 @@ window.addEventListener( // This is pretty useless at the end for our project, b
                 analyser.connect(context.destination); // connect the analyser
             }
             
-            myFunction();
+            animateBars();
         };
     },
     false
 );
 
-function myFunction(){
+function animateBars(){
     
     //requests function call on next frame
     window.RequestAnimationFrame =
-        window.requestAnimationFrame(myFunction) ||
-        window.msRequestAnimationFrame(myFunction) ||
-        window.mozRequestAnimationFrame(myFunction) ||
-        window.webkitRequestAnimationFrame(myFunction);
+        window.requestAnimationFrame(animateBars) ||
+        window.msRequestAnimationFrame(animateBars) ||
+        window.mozRequestAnimationFrame(animateBars) ||
+        window.webkitRequestAnimationFrame(animateBars);
 
     
     fbc_array = new Uint8Array(analyser.frequencyBinCount); // Read about it yourself https://developer.mozilla.org/en-US/docs/Web/API/AnalyserNode/frequencyBinCount
