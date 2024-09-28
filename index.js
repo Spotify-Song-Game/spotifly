@@ -96,6 +96,34 @@ window.addEventListener( // This is pretty useless at the end for our project, b
     false
 );
 
+
+class inputHandler {
+	constructor(){
+		this.keys = [];
+		window.addEventListener('keydown', e => { //<!-- ****  JavaScript Feature submission **** -->
+			if ((e.key === 'ArrowLeft' ||
+				e.key === 'ArrowRight' ||
+				e.key === ' '  //space check
+				) && this.keys.indexOf(e.key) === -1){
+				this.keys.push(e.key);
+				}
+			//console.log(e.key, this.keys);
+		});
+
+		window.addEventListener('keyup', e => {
+			if ((e.key === 'ArrowLeft' ||
+				e.key === 'ArrowRight' ||
+				e.key === ' ' && e.repeat === false //space check
+				)){
+				this.keys.splice(this.keys.indexOf(e.key), 1);
+				}
+			console.log(e.key, this.keys);
+		});
+	}
+}
+
+let input = new inputHandler();
+
 function animateBars(){
     
     //requests function call on next frame
@@ -136,42 +164,23 @@ function animateBars(){
         Matter.Body.setVelocity(playerBox, unitVector * 3);
     }
     */
+
+
+    var force = 0.01;
+    if(input.keys.includes('ArrowLeft')) {
+        Matter.Body.applyForce(playerBox, playerBox.position, { x: -force, y: 0 });
+    }
+    if(input.keys.includes('ArrowRight')) {
+        Matter.Body.applyForce(playerBox, playerBox.position, { x: force, y: 0 });
+    }
+    if(input.keys.includes('ArrowUp')) {
+        Matter.Body.applyForce(playerBox, playerBox.position, { x: 0, y: -force });
+    }
+    if(input.keys.includes('ArrowDown')) {
+        Matter.Body.applyForce(playerBox, playerBox.position, { x: 0, y: force });
+    }
+
 }
 
 // run the engine
 Runner.run(runner, engine);
-
-// Keyboard event listener
-document.addEventListener('keydown', function(event) {
-    var force = 0.01;
-    if(event.key === 'ArrowLeft') {
-        Matter.Body.applyForce(playerBox, playerBox.position, { x: -force, y: 0 });
-    }
-    if(event.key === 'ArrowRight') {
-        Matter.Body.applyForce(playerBox, playerBox.position, { x: force, y: 0 });
-    }
-    if(event.key === 'ArrowUp') {
-        Matter.Body.applyForce(playerBox, playerBox.position, { x: 0, y: -force });
-    }
-    if(event.key === 'ArrowDown') {
-        Matter.Body.applyForce(playerBox, playerBox.position, { x: 0, y: force });
-    }
-
-    // switch(event.key) {
-    //     case 'ArrowLeft':
-    //         Matter.Body.applyForce(playerBox, playerBox.position, { x: -force, y: 0 });
-    //         break;
-    //     case 'ArrowRight':
-    //         Matter.Body.applyForce(playerBox, playerBox.position, { x: force, y: 0 });
-    //         break;
-    // }
-    // switch(event.key) {
-    //     case 'ArrowUp':
-    //         Matter.Body.applyForce(playerBox, playerBox.position, { x: 0, y: -force });
-    //         break;
-    //     case 'ArrowDown':
-    //         Matter.Body.applyForce(playerBox, playerBox.position, { x: 0, y: force });
-    //         break;
-    // }
-});
-
