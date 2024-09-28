@@ -1,13 +1,7 @@
 body {
-    background: black;
+    background: rgb(65, 57, 57);
     padding: 0px;
     margin: 0px;
-}
-
-div#player {
-    width: 80vw;
-    height: 60vh;
-    background: black;
-    margin: 20vh auto 0px auto;
-    display: block;
+    overflow: hidden; /* This removes the scrollbars on the sides cause 
+    they f'ing move around when you use inputs */
 }

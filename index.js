@@ -103,7 +103,8 @@ class inputHandler {
 		window.addEventListener('keydown', e => { //<!-- ****  JavaScript Feature submission **** -->
 			if ((e.key === 'ArrowLeft' ||
 				e.key === 'ArrowRight' ||
-				e.key === ' '  //space check
+				e.key === 'ArrowUp' ||
+                e.key === 'ArrowDown'
 				) && this.keys.indexOf(e.key) === -1){
 				this.keys.push(e.key);
 				}
@@ -113,11 +114,12 @@ class inputHandler {
 		window.addEventListener('keyup', e => {
 			if ((e.key === 'ArrowLeft' ||
 				e.key === 'ArrowRight' ||
-				e.key === ' ' && e.repeat === false //space check
+				e.key === 'ArrowUp' ||
+                e.key === 'ArrowDown'
 				)){
 				this.keys.splice(this.keys.indexOf(e.key), 1);
 				}
-			console.log(e.key, this.keys);
+			//console.log(e.key, this.keys);
 		});
 	}
 }
@@ -167,7 +169,9 @@ function animateBars(){
 
 
     var force = 0.01;
+    //console.log("woohoo");
     if(input.keys.includes('ArrowLeft')) {
+        //console.log("yippee");
         Matter.Body.applyForce(playerBox, playerBox.position, { x: -force, y: 0 });
     }
     if(input.keys.includes('ArrowRight')) {
