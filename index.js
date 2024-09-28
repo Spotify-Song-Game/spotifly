@@ -27,10 +27,20 @@ var render = Render.create({ //instantiates a render object which actually displ
     }
 });
 
-var playerBox = Bodies.rectangle(400, 200, 55, 55); //creating a square that should represent the player
+// creating a square that should represent the player
+var playerBox = Bodies.rectangle(400, 200, 55, 55, {
+    render: {
+        fillStyle: 'cyan'
+    }
+}); 
+
 var enemyBoxes = [] //empty array for adding enemy boxes
 for(var i=0; i<5; i++){
-    var enemyBox = Bodies.rectangle(i*200+10, 400, 55, 55)
+    var enemyBox = Bodies.rectangle(i*200+10, 400, 55, 55, {
+        render: {
+            fillStyle: 'red'
+        }
+    });
     enemyBox.restitution = 1.5//sets bounce/elasticity to more than 1 so it bounces a lot
     enemyBoxes.push(enemyBox); //adds enemyBox to enemyboxes array 
 }
