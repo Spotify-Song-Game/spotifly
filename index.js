@@ -13,7 +13,6 @@ var Engine = Matter.Engine,
     Runner = Matter.Runner,
     Bodies = Matter.Bodies,
     Composite = Matter.Composite;
-//
 
 var engine = Engine.create(); //instantiates the engine object which runs the physics engine
 
@@ -45,7 +44,7 @@ for(var i=0; i<5; i++){
     enemyBoxes.push(enemyBox); //adds enemyBox to enemyboxes array 
 }
 engine.gravity = {x: 0, y: 1, scale: 0.0005}
-playerBox.restitution = 1.5;
+playerBox.restitution = 0;
 
 var ground = [];
 var barHeights = Array(NUM_BARS).fill(400);
@@ -62,7 +61,7 @@ Composite.add(engine.world, playerBox);
 Composite.add(engine.world, ground);
 Composite.add(engine.world, walls);
 //Composite.add(engine.world, Bodies.rectangle(300, -10, 1000, 10, {isStatic: true}))
-Composite.add(engine.world, enemyBoxes);
+// Composite.add(engine.world, enemyBoxes);
 
 // run the renderer
 Render.run(render);
@@ -141,4 +140,38 @@ function animateBars(){
 
 // run the engine
 Runner.run(runner, engine);
+
+// Keyboard event listener
+document.addEventListener('keydown', function(event) {
+    var force = 0.01;
+    if(event.key === 'ArrowLeft') {
+        Matter.Body.applyForce(playerBox, playerBox.position, { x: -force, y: 0 });
+    }
+    if(event.key === 'ArrowRight') {
+        Matter.Body.applyForce(playerBox, playerBox.position, { x: force, y: 0 });
+    }
+    if(event.key === 'ArrowUp') {
+        Matter.Body.applyForce(playerBox, playerBox.position, { x: 0, y: -force });
+    }
+    if(event.key === 'ArrowDown') {
+        Matter.Body.applyForce(playerBox, playerBox.position, { x: 0, y: force });
+    }
+
+    // switch(event.key) {
+    //     case 'ArrowLeft':
+    //         Matter.Body.applyForce(playerBox, playerBox.position, { x: -force, y: 0 });
+    //         break;
+    //     case 'ArrowRight':
+    //         Matter.Body.applyForce(playerBox, playerBox.position, { x: force, y: 0 });
+    //         break;
+    // }
+    // switch(event.key) {
+    //     case 'ArrowUp':
+    //         Matter.Body.applyForce(playerBox, playerBox.position, { x: 0, y: -force });
+    //         break;
+    //     case 'ArrowDown':
+    //         Matter.Body.applyForce(playerBox, playerBox.position, { x: 0, y: force });
+    //         break;
+    // }
+});
 
