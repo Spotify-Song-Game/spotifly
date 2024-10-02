@@ -107,7 +107,11 @@ class inputHandler {
 			if ((e.key === 'ArrowLeft' ||
 				e.key === 'ArrowRight' ||
 				e.key === 'ArrowUp' ||
-                e.key === 'ArrowDown'
+                e.key === 'ArrowDown' ||
+                e.key === 'w' ||
+                e.key === 'a' ||
+                e.key === 's' ||
+                e.key === 'd'
 				) && this.keys.indexOf(e.key) === -1){
 				this.keys.push(e.key);
 				}
@@ -118,7 +122,11 @@ class inputHandler {
 			if ((e.key === 'ArrowLeft' ||
 				e.key === 'ArrowRight' ||
 				e.key === 'ArrowUp' ||
-                e.key === 'ArrowDown'
+                e.key === 'ArrowDown' ||
+                e.key === 'w' ||
+                e.key === 'a' ||
+                e.key === 's' ||
+                e.key === 'd'
 				)){
 				this.keys.splice(this.keys.indexOf(e.key), 1);
 				}
@@ -173,17 +181,17 @@ function animateBars(){
 
     var force = 0.01;
     //console.log("woohoo");
-    if(input.keys.includes('ArrowLeft')) {
+    if(input.keys.includes('ArrowLeft') || input.keys.includes('a')) {
         //console.log("yippee");
         Matter.Body.applyForce(playerBox, playerBox.position, { x: -force, y: 0 });
     }
-    if(input.keys.includes('ArrowRight')) {
+    if(input.keys.includes('ArrowRight') || input.keys.includes('d')) {
         Matter.Body.applyForce(playerBox, playerBox.position, { x: force, y: 0 });
     }
-    if(input.keys.includes('ArrowUp')) {
+    if(input.keys.includes('ArrowUp') || input.keys.includes('w')) {
         Matter.Body.applyForce(playerBox, playerBox.position, { x: 0, y: -force });
     }
-    if(input.keys.includes('ArrowDown')) {
+    if(input.keys.includes('ArrowDown') || input.keys.includes('s')) {
         Matter.Body.applyForce(playerBox, playerBox.position, { x: 0, y: force });
     }
 
