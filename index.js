@@ -31,7 +31,10 @@ var playerBox = Bodies.rectangle(400, 200, 55, 55, {
     render: {
         fillStyle: 'cyan'
     }
+    
 }); 
+
+Matter.Body.setInertia(playerBox, Infinity);
 
 var enemyBoxes = [] //empty array for adding enemy boxes
 for(var i=0; i<5; i++){
