@@ -4,4 +4,14 @@ body {
     margin: 0px;
     overflow: hidden; /* This removes the scrollbars on the sides cause 
     they f'ing move around when you use inputs */
+    background: black;
+    padding: 15px;
+    margin: 50px;
+    vertical-align: middle;
+}
+
+#audio {
+    background: black;
+    margin: 15px;
+    display: block;
 }
