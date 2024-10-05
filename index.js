@@ -5,7 +5,9 @@ const Engine = Matter.Engine, // makes life easier so we don't have to call from
     Render = Matter.Render,
     Runner = Matter.Runner,
     Bodies = Matter.Bodies,
-    Composite = Matter.Composite;
+    Composite = Matter.Composite,
+    Events = Matter.Events,
+    Body = Matter.Body;
 
 const SCREEN_WIDTH = 1000;
 const SCREEN_HEIGHT = 600;
@@ -18,13 +20,11 @@ const PLAYER_MASS = 50;
 
 const ENEMY_SIZE = 25;
 const ENEMY_MASS = 50;
-
 const MAX_ENEMIES = 5; //max number of enemies on screen
 
 
-
 const MIN_Y = 600; //minimum y level before game resets cube (BROKEN)
-const MAX_SPEED = 5; //speed cap (BROKEN)
+const MAX_SPEED = 10; //speed cap (BROKEN)
 const ORIGIN = {x: 400, y: 200} //where to teleport cube when out of bounds (BROKEN)
 
 //
@@ -32,11 +32,11 @@ const ORIGIN = {x: 400, y: 200} //where to teleport cube when out of bounds (BRO
 //
 var numEnemies = 0;
 var points = 0;
+var gameRunning = false;
 
 //
 //ENGINE SHENANIGANS
 //
-
 var engine = Engine.create(); //instantiates the engine object which runs the physics engine
 var render = Render.create({ //instantiates a render object which actually displays the page
     element: document.body, //sets the element attribute to render within the document body
@@ -111,30 +111,7 @@ Render.run(render);
 var runner = Runner.create();
 var audio = new Audio(); 
 
-audio.id = "audio_player";
-audio.src = "mp3/beautiful.mp3";
-audio.controls = true; // not going to exist in the final, but for now it provides a button to start the music which starts the bars
-audio.loop = false; // loop or don't loop
-audio.autoplay = false; // maybe true later down the line? Automatically starts the music. We probably link the start of the music to a start button though.
-window.addEventListener( // This is pretty useless at the end for our project, but we will need SOME event listener for when the game starts, that will then start song + bars
-    "load",
-    function() {
-        document.getElementById("audio").appendChild(audio);
-        document.getElementById("audio_player").onplay = function() {
-            if (typeof(context) === "undefined") {
-                context = new AudioContext(); // Make an audio context, basically a graph with nodes, used in analysis
-                analyser = context.createAnalyser(); // Actually make the analyser which will then give us frequencyBinCount - used for visualizer
-                source = context.createMediaElementSource(audio); // Necessary js bs, source for media, used to connect audio - analyser
-
-                source.connect(analyser); // Connect the audio to the analyser
-                analyser.connect(context.destination); // connect the analyser
-            }
-            frameUpdate();
-        };
-    },
-    false
-);
-
+createAudioPlayer();
 class inputHandler {
     constructor(){
         this.keys = [];
@@ -168,6 +145,59 @@ class inputHandler {
 }
 let input = new inputHandler();
 
+var count=0;
+
+Events.on(engine, 'beforeUpdate', limitMaxSpeed);
+
+function frameUpdate(){
+    count++;
+    //requests function call on next frame
+    window.RequestAnimationFrame =
+        window.requestAnimationFrame(frameUpdate) ||
+        window.msRequestAnimationFrame(frameUpdate) ||
+        window.mozRequestAnimationFrame(frameUpdate) ||
+        window.webkitRequestAnimationFrame(frameUpdate);
+
+    if(count==12){
+        setBarsToMusic();
+        count=0;
+    }        
+    inputReader();
+}
+// run the engine
+Runner.run(runner, engine);
+
+//
+//
+//FUNCTIONS AND CLASSES
+//
+//
+
+function createAudioPlayer(){
+    audio.id = "audio_player";
+    audio.src = "mp3/beautiful.mp3";
+    audio.controls = true; // not going to exist in the final, but for now it provides a button to start the music which starts the bars
+    audio.loop = false; // loop or don't loop
+    audio.autoplay = false; // maybe true later down the line? Automatically starts the music. We probably link the start of the music to a start button though.
+    window.addEventListener( // This is pretty useless at the end for our project, but we will need SOME event listener for when the game starts, that will then start song + bars
+        "load",
+        function() {
+            document.getElementById("audio").appendChild(audio);
+            document.getElementById("audio_player").onplay = function() {
+                if (typeof(context) === "undefined") {
+                    context = new AudioContext(); // Make an audio context, basically a graph with nodes, used in analysis
+                    analyser = context.createAnalyser(); // Actually make the analyser which will then give us frequencyBinCount - used for visualizer
+                    source = context.createMediaElementSource(audio); // Necessary js bs, source for media, used to connect audio - analyser
+
+                    source.connect(analyser); // Connect the audio to the analyser
+                    analyser.connect(context.destination); // connect the analyser
+                }
+                frameUpdate();
+            };
+        },
+        false
+    );
+}
 function inputReader(){
     var force = 0.05;
     if(input.keys.includes('ArrowLeft') || input.keys.includes('a')) {
@@ -183,7 +213,6 @@ function inputReader(){
         Matter.Body.applyForce(playerBox, playerBox.position, { x: 0, y: force });
     }
 }
-
 function setBarsToMusic(){
     fbc_array = new Uint8Array(analyser.frequencyBinCount); // Read about it yourself https://developer.mozilla.org/en-US/docs/Web/API/AnalyserNode/frequencyBinCount
     analyser.getByteFrequencyData(fbc_array); // This is the only thing I don't yet understand, but it's the most important part
@@ -201,7 +230,7 @@ function setBarsToMusic(){
             x = bar_width/2 + bar_width*i, 
             y = 610, 
             width = bar_width, 
-            height = barHeights[i]*4, 
+            height = barHeights[i]*5, 
             options = {
                 isStatic: true,
                 restitution: 2
@@ -215,24 +244,21 @@ function setBarsToMusic(){
 
     Composite.add(engine.world, bars);
 }
-
-var count=0;
-
-function frameUpdate(){
-    count++;
-    //requests function call on next frame
-    window.RequestAnimationFrame =
-        window.requestAnimationFrame(frameUpdate) ||
-        window.msRequestAnimationFrame(frameUpdate) ||
-        window.mozRequestAnimationFrame(frameUpdate) ||
-        window.webkitRequestAnimationFrame(frameUpdate);
-
-    if(count==12){
-        setBarsToMusic();
-        count=0;
+function limitMaxSpeed(){
+    let maxSpeed = MAX_SPEED;
+    if (playerBox.velocity.x > maxSpeed) {
+        Body.setVelocity(playerBox, { x: maxSpeed, y: playerBox.velocity.y });
     }
-        
-    inputReader();
+
+    if (playerBox.velocity.x < -maxSpeed) {
+        Body.setVelocity(playerBox, { x: -maxSpeed, y: playerBox.velocity.y });
+    }
+
+    if (playerBox.velocity.y > maxSpeed) {
+        Body.setVelocity(playerBox, { x: playerBox.velocity.x, y: maxSpeed });
+    }
+
+    if (playerBox.velocity.y < -maxSpeed) {
+        Body.setVelocity(playerBox, { x: -playerBox.velocity.x, y: -maxSpeed });
+    }
 }
-// run the engine
-Runner.run(runner, engine);
