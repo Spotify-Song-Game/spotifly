@@ -125,23 +125,8 @@ window.addEventListener( // This is pretty useless at the end for our project, b
     false
 );
 
-
 class inputHandler {
     constructor(){
-		//arrays to use with buttonPressed function
-        
-        /*
-        this.upKeys = ['ArrowUp', 'w']
-        this.downKeys = ['ArrowUp', 's']
-        this.leftKeys = ['ArrowLeft', 'a']
-        this.rightKeys = ['ArrowRight', 'd']
-
-        this.up;
-        this.down;
-        this.left;
-        this.right;
-        */
-    
         this.keys = [];
 		window.addEventListener('keydown', e => { //<!-- ****  JavaScript Feature submission **** -->
 			if ((e.key === 'ArrowLeft' ||
@@ -156,7 +141,6 @@ class inputHandler {
 				    this.keys.push(e.key);
 				}
 		});
-
 		window.addEventListener('keyup', e => {
 			if ((e.key === 'ArrowLeft' ||
 				e.key === 'ArrowRight' ||
@@ -169,21 +153,26 @@ class inputHandler {
 				)){
 				    this.keys.splice(this.keys.indexOf(e.key), 1);
 				}
-			//console.log(e.key, this.keys);
-            
 		});
 	}
-    buttonPressed(e, keys){ //
-        keys.forEach((key) => {
-            if(e.key === key){
-                return true;
-            }
-        })
-        return false;
+}
+let input = new inputHandler();
+
+function inputReader(){
+    var force = 0.01;
+    if(input.keys.includes('ArrowLeft') || input.keys.includes('a')) {
+        Matter.Body.applyForce(playerBox, playerBox.position, { x: -force, y: 0 });
+    }
+    if(input.keys.includes('ArrowRight') || input.keys.includes('d')) {
+        Matter.Body.applyForce(playerBox, playerBox.position, { x: force, y: 0 });
+    }
+    if(input.keys.includes('ArrowUp') || input.keys.includes('w')) {
+        Matter.Body.applyForce(playerBox, playerBox.position, { x: 0, y: -force });
+    }
+    if(input.keys.includes('ArrowDown') || input.keys.includes('s')) {
+        Matter.Body.applyForce(playerBox, playerBox.position, { x: 0, y: force });
     }
 }
-
-let input = new inputHandler();
 
 function setBarsToMusic(){
     fbc_array = new Uint8Array(analyser.frequencyBinCount); // Read about it yourself https://developer.mozilla.org/en-US/docs/Web/API/AnalyserNode/frequencyBinCount
@@ -214,24 +203,8 @@ function frameUpdate(){
         window.webkitRequestAnimationFrame(frameUpdate);
 
     setBarsToMusic()
+    inputReader()
     
-    var force = 0.01;
-    //console.log("woohoo");
-    if(input.keys.includes('ArrowLeft') || input.keys.includes('a')) {
-        //console.log("yippee");
-        Matter.Body.applyForce(playerBox, playerBox.position, { x: -force, y: 0 });
-    }
-    if(input.keys.includes('ArrowRight') || input.keys.includes('d')) {
-        Matter.Body.applyForce(playerBox, playerBox.position, { x: force, y: 0 });
-    }
-    if(input.keys.includes('ArrowUp') || input.keys.includes('w')) {
-        Matter.Body.applyForce(playerBox, playerBox.position, { x: 0, y: -force });
-    }
-    if(input.keys.includes('ArrowDown') || input.keys.includes('s')) {
-        Matter.Body.applyForce(playerBox, playerBox.position, { x: 0, y: force });
-    }
-
 }
-
 // run the engine
 Runner.run(runner, engine);
