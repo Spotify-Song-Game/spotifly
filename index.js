@@ -10,10 +10,18 @@ const Engine = Matter.Engine, // makes life easier so we don't have to call from
 const SCREEN_WIDTH = 1000;
 const SCREEN_HEIGHT = 600;
 
-const NUM_BARS = 30; //the number of bars you should see on screen
+const NUM_BARS = 60; //the number of bars you should see on screen
 const bar_width = SCREEN_WIDTH/NUM_BARS; // width of each bar
 
+const PLAYER_SIZE = 25;
+const PLAYER_MASS = 50;
+
+const ENEMY_SIZE = 25;
+const ENEMY_MASS = 50;
+
 const MAX_ENEMIES = 5; //max number of enemies on screen
+
+
 
 const MIN_Y = 600; //minimum y level before game resets cube (BROKEN)
 const MAX_SPEED = 5; //speed cap (BROKEN)
@@ -36,7 +44,8 @@ var render = Render.create({ //instantiates a render object which actually displ
     options: {
         width: SCREEN_WIDTH,
         height: SCREEN_HEIGHT,
-        wireframes: false
+        wireframes: false,
+        background: '#000000'
     }
 });
 engine.gravity = {x: 0, y: 1, scale: 0.001}
@@ -47,26 +56,27 @@ engine.gravity = {x: 0, y: 1, scale: 0.001}
 
 //PLAYER
 // creating a square that should represent the player
-var playerBox = Bodies.rectangle(400, 200, 55, 55, {
+var playerBox = Bodies.rectangle(400, 200, PLAYER_SIZE, PLAYER_SIZE, {
     render: {
         fillStyle: 'cyan'
     }
 }); 
 Matter.Body.setInertia(playerBox, Infinity); //stop rotation
 playerBox.restitution = 0; //bounciness = NO
+Matter.Body.setMass(playerBox,PLAYER_MASS);
 
 //ENEMY
 var enemyBoxes = [] //empty array for adding enemy boxes
 
 for(var i=0; i<5; i++){
-    var enemyBox = Bodies.rectangle(i*200+10, 400, 55, 55, {
+    var enemyBox = Bodies.rectangle(i*200+10, 400, ENEMY_SIZE, ENEMY_SIZE, {
         render: {
             fillStyle: 'red'
         }
     });
     enemyBox.restitution = 1.3//sets bounce/elasticity to more than 1 so it bounces a lot
-    
     enemyBoxes.push(enemyBox); //adds enemyBox to enemyboxes array 
+    Matter.Body.setMass(enemyBox,PLAYER_MASS);
 }
 
 //
@@ -159,7 +169,7 @@ class inputHandler {
 let input = new inputHandler();
 
 function inputReader(){
-    var force = 0.01;
+    var force = 0.05;
     if(input.keys.includes('ArrowLeft') || input.keys.includes('a')) {
         Matter.Body.applyForce(playerBox, playerBox.position, { x: -force, y: 0 });
     }
@@ -179,7 +189,6 @@ function setBarsToMusic(){
     analyser.getByteFrequencyData(fbc_array); // This is the only thing I don't yet understand, but it's the most important part
     //https://developer.mozilla.org/en-US/docs/Web/API/AnalyserNode/getByteFrequencyData
 
-
     Composite.remove(engine.world, bars); //removes old bars
 
     for (let i = 0; i < NUM_BARS; i++) { //loops across ground 
@@ -187,14 +196,30 @@ function setBarsToMusic(){
         if (barHeights[i] > -10){
             barHeights[i] = -10
         }
-        bars[i]=Bodies.rectangle(bar_width/2 + bar_width*i, 610, bar_width, barHeights[i]*4, {isStatic: true}); //adjust height of bars
+        //adjust height of bars
+        var singleBar = Bodies.rectangle(
+            x = bar_width/2 + bar_width*i, 
+            y = 610, 
+            width = bar_width, 
+            height = barHeights[i]*4, 
+            options = {
+                isStatic: true,
+                restitution: 2
+                },
+            render = {
+                fillStyle: 'white',
+            }); 
+        bars[i]=singleBar;
     }
         //alert("dawdj");
 
     Composite.add(engine.world, bars);
 }
+
+var count=0;
+
 function frameUpdate(){
-    
+    count++;
     //requests function call on next frame
     window.RequestAnimationFrame =
         window.requestAnimationFrame(frameUpdate) ||
@@ -202,9 +227,12 @@ function frameUpdate(){
         window.mozRequestAnimationFrame(frameUpdate) ||
         window.webkitRequestAnimationFrame(frameUpdate);
 
-    setBarsToMusic()
-    inputReader()
-    
+    if(count==12){
+        setBarsToMusic();
+        count=0;
+    }
+        
+    inputReader();
 }
 // run the engine
 Runner.run(runner, engine);
