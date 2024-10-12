@@ -111,6 +111,8 @@ Render.run(render);
 var runner = Runner.create();
 var audio = new Audio(); 
 
+var collisionDetectionActive = false;
+
 createAudioPlayer();
 class inputHandler {
     constructor(){
@@ -149,6 +151,25 @@ var count=0;
 
 Events.on(engine, 'beforeUpdate', limitMaxSpeed);
 
+Events.on(engine, 'collisionStart', function(event) {
+    if (!collisionDetectionActive) return; // Skip collision detection if not active
+
+    var pairs = event.pairs;
+    
+    for (var i = 0; i < pairs.length; i++) {
+        var pair = pairs[i];
+        
+        if ((pair.bodyA === playerBox && enemyBoxes.includes(pair.bodyB)) ||
+            (pair.bodyB === playerBox && enemyBoxes.includes(pair.bodyA))) {
+            console.log('Collision detected! Game over.');
+            Runner.stop(runner);
+            gameRunning = false;
+            audio.pause(); // Pause the audio
+            // You can add more game over logic here
+        }
+    }
+});
+
 function frameUpdate(){
     count++;
     //requests function call on next frame
@@ -158,14 +179,14 @@ function frameUpdate(){
         window.mozRequestAnimationFrame(frameUpdate) ||
         window.webkitRequestAnimationFrame(frameUpdate);
 
-    if(count==12){
+    if(count==1){
         setBarsToMusic();
         count=0;
     }        
     inputReader();
 }
 // run the engine
-Runner.run(runner, engine);
+runner = Runner.run(runner, engine);
 
 //
 //
@@ -192,6 +213,7 @@ function createAudioPlayer(){
                     source.connect(analyser); // Connect the audio to the analyser
                     analyser.connect(context.destination); // connect the analyser
                 }
+                collisionDetectionActive = true; // Activate collision detection when music starts
                 frameUpdate();
             };
         },
