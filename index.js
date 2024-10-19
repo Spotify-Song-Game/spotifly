@@ -196,7 +196,7 @@ runner = Runner.run(runner, engine);
 
 function createAudioPlayer(){
     audio.id = "audio_player";
-    audio.src = "mp3/beautiful.mp3";
+    audio.src = "mp3/shoot.mp3";
     audio.controls = true; // not going to exist in the final, but for now it provides a button to start the music which starts the bars
     audio.loop = false; // loop or don't loop
     audio.autoplay = false; // maybe true later down the line? Automatically starts the music. We probably link the start of the music to a start button though.
